@@ -1,0 +1,4 @@
+*.o
+
+pubsub_client
+pubsub_server

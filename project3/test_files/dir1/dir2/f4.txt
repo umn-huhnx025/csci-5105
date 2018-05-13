@@ -1,0 +1,1 @@
+This is f4, but its hash doesn't include null bytes

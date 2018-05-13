@@ -1,0 +1,32 @@
+
+Vagrant.configure("2") do |config|
+
+  config.vm.box = "ubuntu/xenial64"
+
+  config.vm.provision "install", type: "shell", inline: <<-SHELL
+    apt-get update
+    apt-get install -y gdb
+  SHELL
+
+  config.vm.network "private_network", type: "dhcp"
+
+  config.hostmanager.enabled = true
+  config.hostmanager.manage_guest = true
+  config.vm.provision :hostmanager, run: "always"
+
+  config.vm.define "tracker" do |tracker|
+    tracker.vm.hostname = "tracker"
+    tracker.vm.provision "install", type: "shell", inline: <<-SHELL
+    apt-get update
+    apt-get install -y build-essential libssl-dev
+    SHELL
+    tracker.vm.network "private_network", ip: "192.168.30.2"
+  end
+
+  (1..2).each do |i|
+    config.vm.define "node#{i}" do |node|
+      node.vm.hostname = "node#{i}"
+      node.vm.network "private_network", ip: "192.168.30.#{i+2}"
+    end
+  end
+end
